@@ -2,6 +2,7 @@ package cas
 
 import (
 	"crypto/rand"
+	"crypto/tls"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -229,6 +230,10 @@ func (c *Client) validateTicket(ticket string, service *http.Request) error {
 		glog.Infof("Attempting ticket validation with %v", r.URL)
 	}
 
+	c.client.Transport = &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	}
+
 	resp, err := c.client.Do(r)
 	if err != nil {
 		return err
@@ -291,6 +296,10 @@ func (c *Client) validateTicketCas1(ticket string, service *http.Request) error 
 
 	if glog.V(2) {
 		glog.Info("Attempting ticket validation with %v", r.URL)
+	}
+
+	c.client.Transport = &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}
 
 	resp, err := c.client.Do(r)
